@@ -1,0 +1,41 @@
+# --- IDE: Android Studio / IntelliJ ---
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Частые внутренние подпапки .idea, которые почти всегда надо игнорировать
+/.idea/caches/
+/.idea/libraries/
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+
+# --- Gradle & Build ---
+.gradle/
+**/build/
+captures/
+externalNativeBuild/
+.cxx/
+
+# --- Android-специфичное ---
+local.properties
+google-services.json          # если есть Firebase — не коммить реальный файл
+keystore.properties            # не коммить пути к ключам
+signing.properties             # не коммить данные подписи
+*.jks
+*.keystore
+
+# --- Артефакты сборки и профилирование ---
+*.apk
+*.aab
+output-metadata.json
+*.hprof
+
+# --- ОС и редакторы ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
