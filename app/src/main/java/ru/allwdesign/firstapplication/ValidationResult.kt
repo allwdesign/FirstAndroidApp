@@ -13,3 +13,15 @@ fun validateMessage(text: String): ValidationResult {
         else -> ValidationResult.Success
     }
 }
+
+fun validatePhone(text: String): ValidationResult {
+    val clean = text.trim()
+    if (clean.isEmpty()) {
+        return ValidationResult.Error("Введите номер телефона")
+    }
+    // Хотя бы одна цифра
+    if (!clean.any { it.isDigit() }) {
+        return ValidationResult.Error("Для звонка нужен номер (хотя бы одна цифра)")
+    }
+    return ValidationResult.Success
+}

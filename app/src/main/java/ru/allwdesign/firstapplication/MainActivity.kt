@@ -1,7 +1,9 @@
 package ru.allwdesign.firstapplication
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,8 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
 import ru.allwdesign.firstapplication.ui.theme.FirstApplicationTheme
+import androidx.core.net.toUri
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +46,23 @@ class MainActivity : ComponentActivity() {
                             val intent = Intent(this, SecondActivity::class.java)
                             intent.putExtra(SecondActivity.EXTRA_MESSAGE, text)
                             startActivity(intent)
-                        })
+                        },
+                        onCallFriend@{ phone ->
+                            if (phone.isBlank()) {
+                                Toast.makeText(this, "Введите номер телефона", Toast.LENGTH_SHORT).show()
+                                return@onCallFriend
+                            }
+
+                            val dialIntent = Intent(Intent.ACTION_DIAL)
+                            dialIntent.data = "tel:$phone".toUri()
+
+                            if (dialIntent.resolveActivity(packageManager) != null) {
+                                startActivity(dialIntent)
+                            } else {
+                                Toast.makeText(this, "Нет приложения для звонков", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    )
                 }
             }
         }
@@ -52,7 +70,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(onSendMessage: (String) -> Unit) {
+fun MainScreen(
+    onSendMessage: (String) -> Unit,
+    onCallFriend: (String) -> Unit
+) {
     var inputText by remember { mutableStateOf("") }
     var hasError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -92,8 +113,9 @@ fun MainScreen(onSendMessage: (String) -> Unit) {
             } else null,
             modifier = Modifier.fillMaxWidth())
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
+        // Переход во вторую Activity - явный Intent
         Button(
             onClick = {
                 // Валидируем текст, при ошибке показываем пользователю текст ошибки
@@ -114,6 +136,29 @@ fun MainScreen(onSendMessage: (String) -> Unit) {
         ) {
             Text("Открыть вторую Activity")
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Звонок - неявный Intent
+        Button(
+            onClick = {
+                val result = validatePhone(inputText)
+                when (result) {
+                    is ValidationResult.Error -> {
+                        errorMessage = result.message
+                    }
+                    ValidationResult.Success -> {
+                        onCallFriend(inputText.trim())
+                    }
+                }
+            },
+            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary
+            ),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Позвонить другу")
+        }
     }
 }
 
@@ -122,11 +167,13 @@ fun MainScreen(onSendMessage: (String) -> Unit) {
 fun MainScreenPreview() {
     FirstApplicationTheme {
         Surface(
-            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
         ) {
-            MainScreen(onSendMessage = { text ->
-                println("В превью отправлено: $text")
-            })
+            MainScreen(
+                onSendMessage = { println("В превью отправлено: $it")},
+                onCallFriend = { println("В превью звонок: $it")}
+            )
         }
     }
 }
