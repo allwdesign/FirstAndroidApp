@@ -1,7 +1,6 @@
 package ru.allwdesign.firstapplication
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -29,8 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.allwdesign.firstapplication.ui.theme.FirstApplicationTheme
 import androidx.core.net.toUri
+import ru.allwdesign.firstapplication.ui.theme.FirstApplicationTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,19 +46,23 @@ class MainActivity : ComponentActivity() {
                             intent.putExtra(SecondActivity.EXTRA_MESSAGE, text)
                             startActivity(intent)
                         },
-                        onCallFriend@{ phone ->
+                        onCallFriend = { phone ->
                             if (phone.isBlank()) {
-                                Toast.makeText(this, "Введите номер телефона", Toast.LENGTH_SHORT).show()
-                                return@onCallFriend
-                            }
-
-                            val dialIntent = Intent(Intent.ACTION_DIAL)
-                            dialIntent.data = "tel:$phone".toUri()
-
-                            if (dialIntent.resolveActivity(packageManager) != null) {
-                                startActivity(dialIntent)
+                                Toast.makeText(this, "Введите номер телефона", Toast.LENGTH_SHORT)
+                                    .show()
                             } else {
-                                Toast.makeText(this, "Нет приложения для звонков", Toast.LENGTH_SHORT).show()
+                                val dialIntent = Intent(Intent.ACTION_DIAL)
+                                dialIntent.data = "tel:$phone".toUri()
+
+                                if (dialIntent.resolveActivity(packageManager) != null) {
+                                    startActivity(dialIntent)
+                                } else {
+                                    Toast.makeText(
+                                        this,
+                                        "Нет приложения для звонков",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
                         }
                     )
@@ -100,7 +103,6 @@ fun MainScreen(
                 hasError = false
                 errorMessage = null
             },
-            label = { Text("Введите сообщение") },
             isError = hasError,
             supportingText = if (hasError) {
                 errorMessage?.let { errMsg ->
@@ -145,8 +147,10 @@ fun MainScreen(
                 val result = validatePhone(inputText)
                 when (result) {
                     is ValidationResult.Error -> {
+                        hasError = true
                         errorMessage = result.message
                     }
+
                     ValidationResult.Success -> {
                         onCallFriend(inputText.trim())
                     }
@@ -171,8 +175,8 @@ fun MainScreenPreview() {
             color = MaterialTheme.colorScheme.background
         ) {
             MainScreen(
-                onSendMessage = { println("В превью отправлено: $it")},
-                onCallFriend = { println("В превью звонок: $it")}
+                onSendMessage = { println("В превью отправлено: $it") },
+                onCallFriend = { println("В превью звонок: $it") }
             )
         }
     }
