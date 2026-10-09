@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <queries>
-        <!-- Возможность открыть звонилку -->
+        <!-- Возможность открыть приложение для дозвона -->
         <intent>
             <action android:name="android.intent.action.DIAL" />
+        </intent>
+        <!-- ДЛЯ SHARING: без этого на Android 11+ окно «Поделиться» не откроется -->
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="text/plain" />
         </intent>
     </queries>
 

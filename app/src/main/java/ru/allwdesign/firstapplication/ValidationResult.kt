@@ -16,12 +16,9 @@ fun validateMessage(text: String): ValidationResult {
 
 fun validatePhone(text: String): ValidationResult {
     val clean = text.trim()
-    if (clean.isEmpty()) {
-        return ValidationResult.Error("Введите номер телефона")
+    return when {
+        clean.isEmpty() -> ValidationResult.Error("Введите номер телефона")
+        !clean.any { it.isDigit() } -> ValidationResult.Error("Для звонка нужен номер (хотя бы одна цифра)")
+        else -> ValidationResult.Success
     }
-    // Хотя бы одна цифра
-    if (!clean.any { it.isDigit() }) {
-        return ValidationResult.Error("Для звонка нужен номер (хотя бы одна цифра)")
-    }
-    return ValidationResult.Success
 }

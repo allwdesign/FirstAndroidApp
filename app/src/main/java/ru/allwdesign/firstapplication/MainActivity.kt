@@ -40,32 +40,45 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen(
-                        onSendMessage = { text ->
-                            val intent = Intent(this, SecondActivity::class.java)
-                            intent.putExtra(SecondActivity.EXTRA_MESSAGE, text)
-                            startActivity(intent)
-                        },
-                        onCallFriend = { phone ->
-                            if (phone.isBlank()) {
-                                Toast.makeText(this, "Введите номер телефона", Toast.LENGTH_SHORT)
-                                    .show()
-                            } else {
-                                val dialIntent = Intent(Intent.ACTION_DIAL)
-                                dialIntent.data = "tel:$phone".toUri()
+                    MainScreen(onSendMessage = { text ->
+                        val intent = Intent(this, SecondActivity::class.java)
+                        intent.putExtra(SecondActivity.EXTRA_MESSAGE, text)
+                        startActivity(intent)
+                    }, onCallFriend = { phone ->
+                        if (phone.isBlank()) {
+                            Toast.makeText(this, "Введите номер телефона", Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
+                            val dialIntent = Intent(Intent.ACTION_DIAL)
+                            dialIntent.data = "tel:$phone".toUri()
 
-                                if (dialIntent.resolveActivity(packageManager) != null) {
-                                    startActivity(dialIntent)
-                                } else {
-                                    Toast.makeText(
-                                        this,
-                                        "Нет приложения для звонков",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+                            if (dialIntent.resolveActivity(packageManager) != null) {
+                                startActivity(dialIntent)
+                            } else {
+                                Toast.makeText(
+                                    this, "Нет приложения для звонков", Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
-                    )
+                    }, onShareText = { text ->
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, text)
+                        }
+
+                        // createChooser создаёт системное окно «Поделиться через...»
+                        val chooser = Intent.createChooser(shareIntent, "Поделиться через...")
+
+                        if (shareIntent.resolveActivity(packageManager) != null) {
+                            startActivity(chooser)
+                        } else {
+                            Toast.makeText(
+                                this,
+                                "Нет приложений для обмена",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    })
                 }
             }
         }
@@ -74,8 +87,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(
-    onSendMessage: (String) -> Unit,
-    onCallFriend: (String) -> Unit
+    onSendMessage: (String) -> Unit, onCallFriend: (String) -> Unit, onShareText: (String) -> Unit
 ) {
     var inputText by remember { mutableStateOf("") }
     var hasError by remember { mutableStateOf(false) }
@@ -96,24 +108,20 @@ fun MainScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         OutlinedTextField(
-            value = inputText,
-            onValueChange = {
-                inputText = it
-                // Сбрасываем ошибку, как только пользователь начал печатать
-                hasError = false
-                errorMessage = null
-            },
-            isError = hasError,
-            supportingText = if (hasError) {
-                errorMessage?.let { errMsg ->
-                    {
-                        Text(
-                            text = errMsg, color = MaterialTheme.colorScheme.error
-                        )
-                    }
+            value = inputText, onValueChange = {
+            inputText = it
+            // Сбрасываем ошибку, как только пользователь начал печатать
+            hasError = false
+            errorMessage = null
+        }, isError = hasError, supportingText = if (hasError) {
+            errorMessage?.let { errMsg ->
+                {
+                    Text(
+                        text = errMsg, color = MaterialTheme.colorScheme.error
+                    )
                 }
-            } else null,
-            modifier = Modifier.fillMaxWidth())
+            }
+        } else null, modifier = Modifier.fillMaxWidth())
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -144,8 +152,7 @@ fun MainScreen(
         // Звонок - неявный Intent
         Button(
             onClick = {
-                val result = validatePhone(inputText)
-                when (result) {
+                when (val result = validatePhone(inputText)) {
                     is ValidationResult.Error -> {
                         hasError = true
                         errorMessage = result.message
@@ -153,15 +160,37 @@ fun MainScreen(
 
                     ValidationResult.Success -> {
                         onCallFriend(inputText.trim())
+                        inputText = ""
                     }
                 }
-            },
-            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+            }, colors = androidx.compose.material3.ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.secondary
-            ),
-            modifier = Modifier.fillMaxWidth()
+            ), modifier = Modifier.fillMaxWidth()
         ) {
             Text("Позвонить другу")
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Поделиться - системный Intent
+        Button(
+            onClick = {
+                when (val result = validateMessage(inputText)) {
+                    is ValidationResult.Error -> {
+                        hasError = true
+                        errorMessage = result.message
+                    }
+
+                    ValidationResult.Success -> {
+                        onShareText(inputText.trim())
+                        inputText = ""
+                    }
+                }
+            }, colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.tertiary
+            ), modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Поделиться текстом")
         }
     }
 }
@@ -171,13 +200,12 @@ fun MainScreen(
 fun MainScreenPreview() {
     FirstApplicationTheme {
         Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
             MainScreen(
                 onSendMessage = { println("В превью отправлено: $it") },
-                onCallFriend = { println("В превью звонок: $it") }
-            )
+                onCallFriend = { println("В превью звонок: $it") },
+                onShareText = { println("В превью поделиться: $it") })
         }
     }
 }
