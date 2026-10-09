@@ -37,8 +37,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             FirstApplicationTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
                     MainScreen(
                         onSendMessage = { text ->
@@ -67,8 +66,7 @@ fun MainScreen(onSendMessage: (String) -> Unit) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Отправка сообщения",
-            style = MaterialTheme.typography.headlineMedium
+            text = "Отправка сообщения", style = MaterialTheme.typography.headlineMedium
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -87,37 +85,26 @@ fun MainScreen(onSendMessage: (String) -> Unit) {
                 errorMessage?.let { errMsg ->
                     {
                         Text(
-                            text = errMsg,
-                            color = MaterialTheme.colorScheme.error
+                            text = errMsg, color = MaterialTheme.colorScheme.error
                         )
                     }
                 }
             } else null,
-            modifier = Modifier.fillMaxWidth()
-        )
+            modifier = Modifier.fillMaxWidth())
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = {
-                // Валидация введенного текста
-                val cleanText = inputText.trim()
-                val isEmpty = cleanText.isEmpty()
-                val isTooLong = cleanText.length > 200
-
-                when {
-                    isEmpty -> {
+                // Валидируем текст, при ошибке показываем пользователю текст ошибки
+                when (val result = validateMessage(inputText)) {
+                    is ValidationResult.Error -> {
                         hasError = true
-                        errorMessage = "Введите сообщение (не только пробелы)"
+                        errorMessage = result.message
                     }
 
-                    isTooLong -> {
-                        hasError = true
-                        errorMessage = "Сообщение слишком длинное (максимум 200 символов)"
-                    }
-
-                    else -> {
-                        onSendMessage(cleanText)
+                    ValidationResult.Success -> {
+                        onSendMessage(inputText.trim())
                         inputText = ""
                     }
                 }
@@ -135,8 +122,7 @@ fun MainScreen(onSendMessage: (String) -> Unit) {
 fun MainScreenPreview() {
     FirstApplicationTheme {
         Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
         ) {
             MainScreen(onSendMessage = { text ->
                 println("В превью отправлено: $text")
