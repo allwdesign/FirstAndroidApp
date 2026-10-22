@@ -5,7 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
-import ru.allwdesign.firstapplication.presentation.screen.AppsListScreen
+import androidx.navigation.compose.rememberNavController
+import ru.allwdesign.firstapplication.presentation.navigation.AppNavHost
 import ru.allwdesign.firstapplication.ui.theme.FirstApplicationTheme
 
 class MainActivity : ComponentActivity() {
@@ -29,7 +30,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             FirstApplicationTheme {
-                AppsListScreen()
+                //AppsListScreen()
+                val navController = rememberNavController()
+                AppNavHost(navController = navController)
             }
         }
     }

@@ -1,8 +1,11 @@
 package ru.allwdesign.firstapplication.domain.model
 
+import androidx.annotation.DrawableRes
+
 data class AppData(
+    val id: Int,
     val name: String,
     val description: String,
-    val icon: Int,
+    @DrawableRes val icon: Int,
     val category: String
 )

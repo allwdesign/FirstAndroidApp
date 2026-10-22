@@ -95,6 +95,7 @@ fun AppItemPreview() {
     FirstApplicationTheme {
         AppItem(
             app = AppData(
+                id = 1,
                 name = "Farm App",
                 description = "Весёлая ферма с кучей животных и растений.",
                 icon = R.drawable.farm_app_icon,
