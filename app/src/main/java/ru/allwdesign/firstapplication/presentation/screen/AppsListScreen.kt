@@ -126,12 +126,19 @@ fun AppsListScreen() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentPadding = PaddingValues(16.dp), // единый отступ для контента
+            contentPadding = PaddingValues(10.dp), // единый отступ для контента
             verticalArrangement = Arrangement.spacedBy(8.dp) // единый отступ между элементами
         ) {
 
             items(apps) { app ->
-                AppItem(app = app)
+                AppItem(
+                    app = app,
+                    onItemClick = { clickedApp ->
+                        // Здесь будет логика
+                        println("Клик по приложению: ${clickedApp.name}")
+                        // Пример: navController.navigate("detail/${clickedApp.id}")
+                    },
+                    modifier = Modifier.padding(horizontal = 8.dp) )
             }
         }
     }
