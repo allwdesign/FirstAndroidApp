@@ -6,7 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -74,7 +76,6 @@ fun AppsListScreen() {
             description = "Весёлая ферма",
             icon = R.drawable.farm_app_icon,
             category = "Игры"
-
         ),
         AppData(
             name = "Bar Mail",
@@ -168,8 +169,9 @@ fun AppsListScreen() {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
-                .padding(innerPadding)
+                .padding(innerPadding),
+            contentPadding = PaddingValues(16.dp), // единый отступ для контента
+            verticalArrangement = Arrangement.spacedBy(8.dp) // единый отступ между элементами
         ) {
 
             items(apps) { app ->
@@ -177,8 +179,7 @@ fun AppsListScreen() {
                     name = app.name,
                     description = app.description,
                     icon = app.icon,
-                    category = app.category,
-                    modifier = Modifier.padding(vertical = 8.dp) // единый отступ
+                    category = app.category
                 )
             }
         }
