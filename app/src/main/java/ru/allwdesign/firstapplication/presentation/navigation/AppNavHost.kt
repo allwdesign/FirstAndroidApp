@@ -6,16 +6,19 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import ru.allwdesign.firstapplication.domain.model.AppDataSource
 import ru.allwdesign.firstapplication.presentation.screen.AppDetailScreen
 import ru.allwdesign.firstapplication.presentation.screen.AppsListScreen
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
+    val apps = AppDataSource.apps
+
     NavHost(
         navController = navController,
         startDestination = Routes.LIST_ROUTE
     ) {
-        // --- ЭКРАН СПИСКА ---
+        // ЭКРАН СПИСКА
         composable(route = Routes.LIST_ROUTE) {
             AppsListScreen(
                 onAppClick = { app ->
@@ -27,7 +30,7 @@ fun AppNavHost(navController: NavHostController) {
             )
         }
 
-        // --- ЭКРАН ДЕТАЛЕЙ ---
+        // ЭКРАН ДЕТАЛЕЙ
         composable(
             route = "${Routes.DETAIL_ROUTE}/{appId}",
             arguments = listOf(
@@ -44,7 +47,13 @@ fun AppNavHost(navController: NavHostController) {
                 "Missing appId argument"
             }
 
-            AppDetailScreen(appId = appId)
+            AppDetailScreen(
+                appId = appId,
+                apps = apps,
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
