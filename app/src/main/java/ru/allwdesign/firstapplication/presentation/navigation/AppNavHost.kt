@@ -1,26 +1,29 @@
 package ru.allwdesign.firstapplication.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import ru.allwdesign.firstapplication.domain.model.AppDataSource
 import ru.allwdesign.firstapplication.presentation.screen.AppDetailScreen
 import ru.allwdesign.firstapplication.presentation.screen.AppsListScreen
+import ru.allwdesign.firstapplication.presentation.viewmodel.AppViewModel
 
 @Composable
-fun AppNavHost(navController: NavHostController) {
-    val apps = AppDataSource.apps
-
+fun AppNavHost(
+    navController: NavHostController,
+    appViewModel: AppViewModel = viewModel()
+) {
     NavHost(
         navController = navController,
         startDestination = Routes.LIST_ROUTE
     ) {
-        // ЭКРАН СПИСКА
+        // Экран списка приложений
         composable(route = Routes.LIST_ROUTE) {
             AppsListScreen(
+                apps = appViewModel.apps,
                 onAppClick = { app ->
                     // Передаём appId через маршрут
                     navController.navigate(
@@ -30,7 +33,7 @@ fun AppNavHost(navController: NavHostController) {
             )
         }
 
-        // ЭКРАН ДЕТАЛЕЙ
+        // Экран деталей приложения
         composable(
             route = "${Routes.DETAIL_ROUTE}/{appId}",
             arguments = listOf(
@@ -49,7 +52,7 @@ fun AppNavHost(navController: NavHostController) {
 
             AppDetailScreen(
                 appId = appId,
-                apps = apps,
+                appViewModel = appViewModel,
                 onBack = {
                     navController.popBackStack()
                 }
