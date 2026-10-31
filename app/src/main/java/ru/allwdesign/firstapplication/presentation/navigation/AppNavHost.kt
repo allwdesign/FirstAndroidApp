@@ -10,11 +10,14 @@ import androidx.navigation.navArgument
 import ru.allwdesign.firstapplication.presentation.screen.AppDetailScreen
 import ru.allwdesign.firstapplication.presentation.screen.AppsListScreen
 import ru.allwdesign.firstapplication.presentation.viewmodel.AppViewModel
+import ru.allwdesign.firstapplication.presentation.viewmodel.AppViewModelFactory
 
 @Composable
 fun AppNavHost(
     navController: NavHostController,
-    appViewModel: AppViewModel = viewModel()
+    appViewModel: AppViewModel = viewModel(
+        factory = AppViewModelFactory()
+    )
 ) {
     NavHost(
         navController = navController,

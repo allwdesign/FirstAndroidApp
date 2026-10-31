@@ -2,12 +2,14 @@ package ru.allwdesign.firstapplication.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import ru.allwdesign.firstapplication.domain.model.AppData
-import ru.allwdesign.firstapplication.domain.model.AppDataSource
+import ru.allwdesign.firstapplication.domain.repository.AppRepository
 
-class AppViewModel : ViewModel() {
+class AppViewModel(
+    private val repository: AppRepository
+) : ViewModel() {
 
-    // Единый источник данных для экранов
-    val apps: List<AppData> = AppDataSource.apps
+    // Единый источник данных(список приложений) для экранов
+    val apps: List<AppData> = repository.getApps()
 
     // Поиск приложения по ID
     fun getAppById(appId: Int): AppData? {
