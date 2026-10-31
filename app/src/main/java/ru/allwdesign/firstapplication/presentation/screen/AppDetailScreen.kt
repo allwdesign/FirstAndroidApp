@@ -15,16 +15,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import ru.allwdesign.firstapplication.domain.model.AppData
+import ru.allwdesign.firstapplication.presentation.viewmodel.AppViewModel
 import ru.allwdesign.firstapplication.ui.theme.FirstApplicationTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppDetailScreen(
     appId: Int,
-    apps: List<AppData>,
+    appViewModel: AppViewModel,
     onBack: () -> Unit
 ) {
-    val app = apps.find { it.id == appId }
+    val app = appViewModel.getAppById(appId)
 
     FirstApplicationTheme {
         Scaffold(

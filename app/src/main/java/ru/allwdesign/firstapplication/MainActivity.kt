@@ -30,7 +30,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             FirstApplicationTheme {
-                //AppsListScreen()
                 val navController = rememberNavController()
                 AppNavHost(navController = navController)
             }
