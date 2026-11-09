@@ -1,7 +1,6 @@
 package ru.allwdesign.firstapplication.presentation.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -11,6 +10,7 @@ import androidx.navigation.navArgument
 import ru.allwdesign.firstapplication.presentation.screen.AppDetailScreen
 import ru.allwdesign.firstapplication.presentation.screen.AppsListScreen
 import ru.allwdesign.firstapplication.presentation.viewmodel.AppViewModel
+
 
 @Composable
 fun AppNavHost(
