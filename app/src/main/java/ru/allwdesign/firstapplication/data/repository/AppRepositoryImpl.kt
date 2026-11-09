@@ -4,8 +4,9 @@ import ru.allwdesign.firstapplication.data.mapper.toDomain
 import ru.allwdesign.firstapplication.data.source.AppDataSource
 import ru.allwdesign.firstapplication.domain.model.AppData
 import ru.allwdesign.firstapplication.domain.repository.AppRepository
+import javax.inject.Inject
 
-class AppRepositoryImpl : AppRepository {
+class AppRepositoryImpl @Inject constructor() : AppRepository {
 
     override fun getApps(): List<AppData> {
         return AppDataSource.apps.toDomain()
