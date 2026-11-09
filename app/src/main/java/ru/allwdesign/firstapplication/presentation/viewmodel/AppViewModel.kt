@@ -1,10 +1,13 @@
 package ru.allwdesign.firstapplication.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.allwdesign.firstapplication.domain.model.AppData
 import ru.allwdesign.firstapplication.domain.repository.AppRepository
+import javax.inject.Inject
 
-class AppViewModel(
+@HiltViewModel
+class AppViewModel @Inject constructor(
     private val repository: AppRepository
 ) : ViewModel() {
 
