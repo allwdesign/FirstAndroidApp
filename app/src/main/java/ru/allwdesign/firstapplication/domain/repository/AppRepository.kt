@@ -4,7 +4,11 @@ import ru.allwdesign.firstapplication.domain.model.AppData
 
 interface AppRepository {
 
-    fun getApps(): List<AppData>
+    /*
+     Retrofit performs network requests asynchronously.
+     The Repository must also support asynchronous calling.
+     */
+    suspend fun getApps(): List<AppData>
 
-    fun getAppById(appId: Int): AppData?
+    suspend fun getAppById(appId: Int): AppData?
 }
